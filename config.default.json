@@ -1,0 +1,11 @@
+{
+  "username":"admin",
+  "password":"admin",
+  "database":{
+    "username":"root",
+    "password":"",
+    "dbname":"firerainlist",
+    "address":"127.0.0.1",
+    "port":"3306"
+  }
+}
