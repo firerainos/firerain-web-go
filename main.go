@@ -5,11 +5,17 @@ import (
 	"flag"
 	"strconv"
 	"github.com/firerainos/firerain-web-go/api"
+	"github.com/firerainos/firerain-web-go/core"
 )
 
 var port = flag.Int("p",8080,"port")
 
 func main() {
+	err:=core.ParseConf("config.json")
+	if err != nil {
+		panic(err)
+	}
+
 	router:= gin.Default()
 
 	apiRouter:= router.Group("/api")
