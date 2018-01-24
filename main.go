@@ -13,6 +13,8 @@ import (
 var port = flag.Int("p", 8080, "port")
 
 func main() {
+	flag.Parse()
+
 	err := core.ParseConf("config.json")
 	if err != nil {
 		if os.IsNotExist(err) {
