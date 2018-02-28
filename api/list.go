@@ -57,7 +57,18 @@ func AddList(context *gin.Context) {
 
 func DelList(context *gin.Context) {
 	id := context.Query("id")
-
+	db, err := core.GetSqlConn()
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"status":"failure",
+			"error":err.Error(),
+		})
+		return
+	}
+	var list List
+	db.First(&list,id)
+	db.Delete(&list)
+	db.Close()
 	context.JSON(http.StatusOK, gin.H{
 		"status": "success",
 	})
