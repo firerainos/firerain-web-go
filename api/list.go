@@ -6,7 +6,6 @@ import (
 	"github.com/firerainos/firerain-web-go/core"
 	"net/http"
 	"fmt"
-	"net/smtp"
 )
 
 type List struct {
@@ -91,13 +90,7 @@ func PassList(context *gin.Context) {
 	}
 	var list List
 	db.First(&list,id)
-	username := core.Conf.Smtp.Username
-	auth := smtp.PlainAuth("", username, core.Conf.Smtp.Password, core.Conf.Smtp.Host)
-	subject := "FireRainOS内测申请审核通过"
-	body := "您已通过FireRainOS内测申请审核，请及时(过时将关闭进群审核)加入qq群:615676312 (入群请填写申请时用的邮箱)来进一步获取内部内测消息及问题建议反馈"
-
-	msg := []byte("To: " + list.Email + "\nFrom: " + username + "\nSubject: " + subject + "\n\n" + body)
-	err = smtp.SendMail(core.Conf.Smtp.Host+":25", auth, core.Conf.Smtp.Username, []string{list.Email}, msg)
+	err = core.SendMail(list.Email)
 	if err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code":103,
