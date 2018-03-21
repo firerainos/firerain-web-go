@@ -1,13 +1,14 @@
 package main
 
 import (
-	"gopkg.in/gin-gonic/gin.v1"
 	"flag"
 	"strconv"
 	"github.com/firerainos/firerain-web-go/api"
 	"github.com/firerainos/firerain-web-go/core"
 	"os"
 	"fmt"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
 )
 
 var port = flag.Int("p", 8080, "port")
@@ -24,7 +25,7 @@ func main() {
 		panic(err)
 	}
 
-	db,err:= core.GetSqlConn()
+	db, err := core.GetSqlConn()
 	if err != nil {
 		panic(err)
 	}
@@ -33,16 +34,32 @@ func main() {
 
 	router := gin.Default()
 
+	store := sessions.NewCookieStore([]byte("firerain"))
+	router.Use(sessions.Sessions("firerain-session", store))
+
 	apiRouter := router.Group("/api")
 
+	apiRouter.GET("/installer/package/:de", api.GetPackage)
+
+	apiRouter.POST("/login", api.Login)
+
 	apiRouter.POST("/list/add", api.AddList)
-	apiRouter.GET("/list/list", api.GetList)
-	apiRouter.DELETE("/list/delete", api.DelList,gin.BasicAuth(gin.Accounts{
-		core.Conf.Username:core.Conf.Password,
-	}),api.DelList)
-	apiRouter.GET("/list/pass",gin.BasicAuth(gin.Accounts{
-		core.Conf.Username:core.Conf.Password,
-	}),api.PassList)
+	apiRouter.GET("/list/list", checkLoginMiddleware, api.GetList)
+	apiRouter.DELETE("/list/delete", checkLoginMiddleware, api.DelList)
+	apiRouter.GET("/list/pass", checkLoginMiddleware, api.PassList)
 
 	router.Run(":" + strconv.Itoa(*port))
+}
+
+func checkLoginMiddleware(ctx *gin.Context) {
+	session := sessions.Default(ctx)
+
+	if session.Get("user") != core.Conf.Username {
+		ctx.JSON(200, gin.H{
+			"code":    101,
+			"message": "unauthorized",
+		})
+
+		ctx.Abort()
+	}
 }

@@ -1,7 +1,7 @@
 package api
 
 import (
-	"gopkg.in/gin-gonic/gin.v1"
+	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/firerainos/firerain-web-go/core"
 	"net/http"
@@ -27,7 +27,10 @@ func GetList(context *gin.Context) {
 	var lists []List
 	db.Find(&lists)
 
-	context.JSON(http.StatusOK, lists)
+	context.JSON(http.StatusOK, gin.H{
+		"code":0,
+		"list":lists,
+	})
 }
 
 func AddList(context *gin.Context) {
@@ -35,16 +38,16 @@ func AddList(context *gin.Context) {
 	err := context.Bind(&list)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
-			"status":"failure",
-			"error":err.Error(),
+			"code":103,
+			"message":err.Error(),
 		})
 		return
 	}
 	db, err := core.GetSqlConn()
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
-			"status":"failure",
-			"error":err.Error(),
+			"code":103,
+			"message":err.Error(),
 		})
 		return
 	}
@@ -52,7 +55,7 @@ func AddList(context *gin.Context) {
 	fmt.Println(list)
 
 	context.JSON(http.StatusOK, gin.H{
-		"status": "success",
+		"code": 0,
 	})
 }
 
@@ -61,8 +64,8 @@ func DelList(context *gin.Context) {
 	db, err := core.GetSqlConn()
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
-			"status":"failure",
-			"error":err.Error(),
+			"code":103,
+			"message":err.Error(),
 		})
 		db.Close()
 		return
@@ -72,7 +75,7 @@ func DelList(context *gin.Context) {
 	db.Delete(&list)
 	db.Close()
 	context.JSON(http.StatusOK, gin.H{
-		"status": "success",
+		"code": 0,
 	})
 }
 
@@ -81,8 +84,8 @@ func PassList(context *gin.Context) {
 	db, err := core.GetSqlConn()
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
-			"status":"failure",
-			"error":err.Error(),
+			"code":103,
+			"message":err.Error(),
 		})
 		return
 	}
@@ -97,8 +100,8 @@ func PassList(context *gin.Context) {
 	err = smtp.SendMail(core.Conf.Smtp.Host+":25", auth, core.Conf.Smtp.Username, []string{list.Email}, msg)
 	if err != nil {
 		context.JSON(http.StatusOK, gin.H{
-			"status":"failure",
-			"error":err.Error(),
+			"code":103,
+			"message":err.Error(),
 		})
 		db.Close()
 		return
@@ -106,6 +109,6 @@ func PassList(context *gin.Context) {
 	db.Model(&list).Update("state", "pass")
 	db.Close()
 	context.JSON(http.StatusOK, gin.H{
-		"status": "success",
+		"code": 0,
 	})
 }
