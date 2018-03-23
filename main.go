@@ -54,7 +54,7 @@ func main() {
 func checkLoginMiddleware(ctx *gin.Context) {
 	session := sessions.Default(ctx)
 
-	if session.Get("user") != core.Conf.Username {
+	if session.Get("username") != core.Conf.Username {
 		ctx.JSON(200, gin.H{
 			"code":    101,
 			"message": "unauthorized",
@@ -62,4 +62,6 @@ func checkLoginMiddleware(ctx *gin.Context) {
 
 		ctx.Abort()
 	}
+
+	ctx.Next()
 }

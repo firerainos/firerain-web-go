@@ -1,0 +1,16 @@
+{
+  "username":"admin",
+  "password":"admin",
+  "database":{
+    "username":"root",
+    "password":"123",
+    "dbname":"firerainlist",
+    "address":"127.0.0.1",
+    "port":"3306"
+  },
+  "smtp":{
+    "username":"xiayesuifeng@qq.com",
+    "password": "kkmsqyfkpxeqjjhh",
+    "host": "smtp.qq.com"
+  }
+}

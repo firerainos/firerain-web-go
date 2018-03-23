@@ -25,11 +25,10 @@ func Login(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{
 			"code": "0",
 		})
-		ctx.Abort()
+	} else {
+		ctx.JSON(200, gin.H{
+			"code":    100,
+			"message": "username or password errors",
+		})
 	}
-
-	ctx.JSON(200, gin.H{
-		"code":    100,
-		"message": "username or password errors",
-	})
 }
