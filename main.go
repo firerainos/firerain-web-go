@@ -48,6 +48,18 @@ func main() {
 	apiRouter.DELETE("/list/delete", checkLoginMiddleware, api.DelList)
 	apiRouter.GET("/list/pass", checkLoginMiddleware, api.PassList)
 
+	packageRouter := apiRouter.Group("/package",checkLoginMiddleware)
+
+	packageRouter.POST("/add")
+	packageRouter.DELETE("/delete")
+	packageRouter.GET("/list")
+
+	itemRouter := apiRouter.Group("/item",checkLoginMiddleware)
+
+	itemRouter.POST("/add")
+	itemRouter.DELETE("/delete")
+	itemRouter.GET("/list")
+
 	router.Run(":" + strconv.Itoa(*port))
 }
 
