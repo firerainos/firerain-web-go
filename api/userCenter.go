@@ -39,5 +39,17 @@ func DeleteGroup(ctx *gin.Context) {
 }
 
 func GetGroup(ctx *gin.Context) {
+	groups,err := userCenter.GetGroup()
+	if err != nil {
+		ctx.JSON(200,gin.H{
+			"code":104,
+			"message":err.Error(),
+		})
+		return
+	}
 
+	ctx.JSON(200,gin.H{
+		"code":0,
+		"groups": groups,
+	})
 }
