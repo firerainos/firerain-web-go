@@ -2,13 +2,14 @@ package main
 
 import (
 	"flag"
-	"strconv"
 	"github.com/firerainos/firerain-web-go/api"
 	"github.com/firerainos/firerain-web-go/core"
 	"os"
 	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/firerainos/firerain-web-go/userCenter"
+	"strconv"
 )
 
 var port = flag.Int("p", 8080, "port")
@@ -30,6 +31,9 @@ func main() {
 		panic(err)
 	}
 	db.AutoMigrate(&api.List{})
+	db.AutoMigrate(&userCenter.User{})
+	db.AutoMigrate(&userCenter.Group{})
+	db.AutoMigrate(&userCenter.Permission{})
 	db.Close()
 
 	router := gin.Default()
@@ -59,6 +63,16 @@ func main() {
 	itemRouter.POST("/add")
 	itemRouter.DELETE("/delete")
 	itemRouter.GET("/list")
+
+	uCenterRouter := apiRouter.Group("/userCenter")
+
+	uCenterRouter.POST("/user/add",api.AddUser)
+	uCenterRouter.DELETE("/user/delete",api.DeleteUser)
+	uCenterRouter.GET("/user/list",api.GetUser)
+
+	uCenterRouter.POST("/group/add",api.AddGroup)
+	uCenterRouter.DELETE("/group/delete",api.DeleteGroup)
+	uCenterRouter.GET("/group/list",api.GetGroup)
 
 	router.Run(":" + strconv.Itoa(*port))
 }
