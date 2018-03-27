@@ -6,7 +6,27 @@ import (
 )
 
 func AddUser(ctx *gin.Context) {
+	type Data struct {
+		Username string `json:"username" form:"username" binding:"required"`
+		Password string `json:"password" form:"username" binding:"required"`
+		Email string `json:"email" form:"email" binding:"required"`
+		Group []string `json:"group" form:"group" binding:"required"`
+	}
 
+	data := Data{}
+
+	ctx.Bind(&data)
+
+	if err := userCenter.AddUser(data.Username,data.Password,data.Email,data.Group); err != nil {
+		ctx.JSON(200,gin.H{
+			"code":104,
+			"message":err.Error(),
+		})
+	}else {
+		ctx.JSON(200,gin.H{
+			"code":0,
+		})
+	}
 }
 
 func DeleteUser(ctx *gin.Context) {
