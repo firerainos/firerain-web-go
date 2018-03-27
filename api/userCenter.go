@@ -116,7 +116,30 @@ func AddGroup(ctx *gin.Context) {
 }
 
 func DeleteGroup(ctx *gin.Context) {
+	type Data struct {
+		Group string `json:"group" form:"group" binding:"required"`
+	}
 
+	data := Data{}
+
+	if err := ctx.Bind(&data);err != nil {
+		ctx.JSON(400, gin.H{
+			"code":104,
+			"message":err.Error(),
+		})
+		return
+	}
+
+	if err := userCenter.DeleteGroup(data.Group);err != nil {
+		ctx.JSON(200,gin.H{
+			"code":104,
+			"message":err.Error(),
+		})
+	}else {
+		ctx.JSON(200,gin.H{
+			"code":0,
+		})
+	}
 }
 
 func GetGroup(ctx *gin.Context) {
