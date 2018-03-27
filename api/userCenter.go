@@ -77,7 +77,24 @@ func GetUser(ctx *gin.Context) {
 
 
 func AddGroup(ctx *gin.Context) {
+	type Data struct {
+		Group string `json:"group" form:"group" binding:"required"`
+	}
 
+	data := Data{}
+
+	ctx.Bind(&data)
+
+	if err := userCenter.AddGroup(data.Group); err != nil {
+		ctx.JSON(200,gin.H{
+			"code":104,
+			"message":err.Error(),
+		})
+	}else {
+		ctx.JSON(200,gin.H{
+			"code":0,
+		})
+	}
 }
 
 func DeleteGroup(ctx *gin.Context) {
