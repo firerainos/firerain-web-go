@@ -33,7 +33,6 @@ func main() {
 	db.AutoMigrate(&api.List{})
 	db.AutoMigrate(&userCenter.User{})
 	db.AutoMigrate(&userCenter.Group{})
-	db.AutoMigrate(&userCenter.Permission{})
 	db.Close()
 
 	router := gin.Default()
