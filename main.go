@@ -64,7 +64,7 @@ func main() {
 	itemRouter.DELETE("/delete")
 	itemRouter.GET("/list")
 
-	uCenterRouter := apiRouter.Group("/userCenter")
+	uCenterRouter := apiRouter.Group("/userCenter",checkLoginMiddleware)
 
 	uCenterRouter.POST("/user/add",api.AddUser)
 	uCenterRouter.DELETE("/user/delete",api.DeleteUser)
