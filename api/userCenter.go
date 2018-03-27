@@ -49,6 +49,11 @@ func DeleteUser(ctx *gin.Context) {
 
 	if err =user.Delete(); err != nil {
 		ctx.JSON(200,gin.H{
+			"code":104,
+			"message":err.Error(),
+		})
+	}else {
+		ctx.JSON(200,gin.H{
 			"code":0,
 		})
 	}
