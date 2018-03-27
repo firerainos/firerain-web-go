@@ -10,7 +10,28 @@ func AddUser(ctx *gin.Context) {
 }
 
 func DeleteUser(ctx *gin.Context) {
+	type Data struct {
+		Id int `json:"id" form:"id" binding:"required"`
+	}
 
+	data := Data{}
+
+	ctx.Bind(&data)
+
+	user,err := userCenter.GetUserById(data.Id)
+	if err != nil {
+		ctx.JSON(200,gin.H{
+			"code":104,
+			"message":err.Error(),
+		})
+		return
+	}
+
+	if err =user.Delete(); err != nil {
+		ctx.JSON(200,gin.H{
+			"code":0,
+		})
+	}
 }
 
 func GetUser(ctx *gin.Context) {
