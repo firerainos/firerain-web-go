@@ -14,7 +14,13 @@ type User struct {
 func Login(ctx *gin.Context) {
 	user := User{}
 
-	ctx.Bind(&user)
+	if err := ctx.Bind(&user);err != nil {
+		ctx.JSON(400, gin.H{
+			"code":105,
+			"message":err.Error(),
+		})
+		return
+	}
 
 	session := sessions.Default(ctx)
 

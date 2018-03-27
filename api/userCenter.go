@@ -15,7 +15,13 @@ func AddUser(ctx *gin.Context) {
 
 	data := Data{}
 
-	ctx.Bind(&data)
+	if err := ctx.Bind(&data);err != nil {
+		ctx.JSON(400, gin.H{
+			"code":104,
+			"message":err.Error(),
+		})
+		return
+	}
 
 	if err := userCenter.AddUser(data.Username,data.Password,data.Email,data.Group); err != nil {
 		ctx.JSON(200,gin.H{
@@ -36,7 +42,13 @@ func DeleteUser(ctx *gin.Context) {
 
 	data := Data{}
 
-	ctx.Bind(&data)
+	if err := ctx.Bind(&data);err != nil {
+		ctx.JSON(400, gin.H{
+			"code":104,
+			"message":err.Error(),
+		})
+		return
+	}
 
 	user,err := userCenter.GetUserById(data.Id)
 	if err != nil {
@@ -83,7 +95,13 @@ func AddGroup(ctx *gin.Context) {
 
 	data := Data{}
 
-	ctx.Bind(&data)
+	if err := ctx.Bind(&data);err != nil {
+		ctx.JSON(400, gin.H{
+			"code":104,
+			"message":err.Error(),
+		})
+		return
+	}
 
 	if err := userCenter.AddGroup(data.Group); err != nil {
 		ctx.JSON(200,gin.H{
