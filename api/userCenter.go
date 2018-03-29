@@ -91,6 +91,7 @@ func GetUser(ctx *gin.Context) {
 func AddGroup(ctx *gin.Context) {
 	type Data struct {
 		Group string `json:"group" form:"group" binding:"required"`
+		Description string `json:"description" form:"description" binding:"required"`
 	}
 
 	data := Data{}
@@ -103,7 +104,7 @@ func AddGroup(ctx *gin.Context) {
 		return
 	}
 
-	if err := userCenter.AddGroup(data.Group); err != nil {
+	if err := userCenter.AddGroup(data.Group,data.Description); err != nil {
 		ctx.JSON(200,gin.H{
 			"code":104,
 			"message":err.Error(),
