@@ -9,16 +9,17 @@ import (
 type Group struct {
 	gorm.Model
 	Name string
+	Description string
 }
 
-func AddGroup(name string) error {
+func AddGroup(name,description string) error {
 	db, err := core.GetSqlConn()
 	if err != nil {
 		return err
 	}
 	defer db.Close()
 
-	return db.Create(&Group{Name: name}).Error
+	return db.Create(&Group{Name: name,Description:description}).Error
 }
 
 func GetGroup() ([]Group, error) {
