@@ -10,7 +10,7 @@ type User struct {
 	Username string
 	Password string
 	Email string
-	Group []Group
+	Group []Group `gorm:"many2many:user_group"`
 }
 
 func AddUser(username,password,email string,group []string) error {
@@ -37,7 +37,7 @@ func GetUser() ([]User,error) {
 	}
 	defer db.Close()
 
-	db.Find(&users)
+	db.Preload("Group").Find(&users)
 
 	return users, nil
 }
@@ -51,7 +51,7 @@ func GetUserByName(name string) (User,error) {
 	}
 	defer db.Close()
 
-	if db.Where("name = ?",name).First(&user).RecordNotFound() {
+	if db.Where("name = ?",name).Preload("Group").First(&user).RecordNotFound() {
 		return user, db.Error
 	}
 
@@ -67,7 +67,7 @@ func GetUserById(id int) (User,error) {
 	}
 	defer db.Close()
 
-	if db.Where("id = ?",id).First(&user).RecordNotFound() {
+	if db.Where("id = ?",id).Preload("Group").First(&user).RecordNotFound() {
 		return user, db.Error
 	}
 
