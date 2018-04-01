@@ -120,17 +120,23 @@ func initDB() {
 		log.Panic(err)
 	}
 
-	if !db.HasTable(&userCenter.Group{}) {
-		userCenter.AddGroup("users", "user")
-		userCenter.AddGroup("admin", "administration")
-	}
+	var createUser,createGroup bool
 
-	if !db.HasTable(&userCenter.User{}) {
-		userCenter.AddUser("admin", "admin", "", []string{"users", "admin"})
-	}
+	createUser = !db.HasTable(&userCenter.Group{})
+	createGroup = !db.HasTable(&userCenter.User{})
 
 	db.AutoMigrate(&api.List{})
 	db.AutoMigrate(&userCenter.User{})
 	db.AutoMigrate(&userCenter.Group{})
+
+	if createUser {
+		userCenter.AddGroup("users", "user")
+		userCenter.AddGroup("admin", "administration")
+	}
+
+	if createGroup {
+		userCenter.AddUser("admin", "admin", "", []string{"users", "admin"})
+	}
+
 	db.Close()
 }
