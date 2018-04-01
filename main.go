@@ -70,7 +70,7 @@ func main() {
 	uCenterRouter.GET("/user", api.GetUser)
 
 	uCenterRouter.POST("/group", api.AddGroup)
-	uCenterRouter.DELETE("/group/:id", api.DeleteGroup)
+	uCenterRouter.DELETE("/group/:name", api.DeleteGroup)
 	uCenterRouter.GET("/group", api.GetGroup)
 
 	router.Run(":" + strconv.Itoa(*port))
