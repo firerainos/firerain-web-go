@@ -121,3 +121,12 @@ func (user User) DeleteGroup(group string) error {
 
 	return db.Save(user).Error
 }
+
+func (user User) HasGroup(group string) bool {
+	for _,g := range user.Group {
+		if g.Name == group {
+			return true
+		}
+	}
+	return false
+}
