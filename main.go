@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/firerainos/firerain-web-go/userCenter"
 	"strconv"
+	"log"
 )
 
 var port = flag.Int("p", 8080, "port")
@@ -26,14 +27,7 @@ func main() {
 		panic(err)
 	}
 
-	db, err := core.GetSqlConn()
-	if err != nil {
-		panic(err)
-	}
-	db.AutoMigrate(&api.List{})
-	db.AutoMigrate(&userCenter.User{})
-	db.AutoMigrate(&userCenter.Group{})
-	db.Close()
+	initDB()
 
 	router := gin.Default()
 
@@ -79,42 +73,14 @@ func main() {
 }
 
 func checkAdminMiddleware(ctx *gin.Context) {
-	session := sessions.Default(ctx)
-
-	username := session.Get("username").(string)
-	if username == "" {
-		ctx.JSON(200, gin.H{
-			"code":    101,
-			"message": "unauthorized",
-		})
-
-		ctx.Abort()
-	}
-
-	if session.Get("username") != core.Conf.Username {
-		user, err := userCenter.GetUserByName(username)
-		if err != nil {
-			ctx.JSON(200, gin.H{
-				"code":    101,
-				"message": "user no found",
-			})
-
-			ctx.Abort()
-		}
-
-		if !user.HasGroup("admin") {
-			ctx.JSON(200, gin.H{
-				"code":    101,
-				"message": "permission denied",
-			})
-		}
-
-	}
-
-	ctx.Next()
+	checkPermission(ctx,"admin")
 }
 
 func checkPermissionMiddleware(ctx *gin.Context) {
+	checkPermission(ctx,"insider")
+}
+
+func checkPermission(ctx *gin.Context,group string){
 	session := sessions.Default(ctx)
 
 	username := session.Get("username").(string)
@@ -137,7 +103,7 @@ func checkPermissionMiddleware(ctx *gin.Context) {
 		ctx.Abort()
 	}
 
-	if !user.HasGroup("insider") {
+	if !user.HasGroup(group) {
 		ctx.JSON(200, gin.H{
 			"code":    101,
 			"message": "permission denied",
@@ -145,5 +111,26 @@ func checkPermissionMiddleware(ctx *gin.Context) {
 	}
 
 	ctx.Next()
+
 }
 
+func initDB() {
+	db, err := core.GetSqlConn()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	if !db.HasTable(&userCenter.Group{}) {
+		userCenter.AddGroup("users", "user")
+		userCenter.AddGroup("admin", "administration")
+	}
+
+	if !db.HasTable(&userCenter.User{}) {
+		userCenter.AddUser("admin", "admin", "", []string{"users", "admin"})
+	}
+
+	db.AutoMigrate(&api.List{})
+	db.AutoMigrate(&userCenter.User{})
+	db.AutoMigrate(&userCenter.Group{})
+	db.Close()
+}
