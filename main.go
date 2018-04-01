@@ -51,27 +51,27 @@ func main() {
 	apiRouter.DELETE("/list/delete", checkLoginMiddleware, api.DelList)
 	apiRouter.GET("/list/pass", checkLoginMiddleware, api.PassList)
 
-	packageRouter := apiRouter.Group("/package",checkLoginMiddleware)
+	packageRouter := apiRouter.Group("/package", checkLoginMiddleware)
 
 	packageRouter.POST("/add")
 	packageRouter.DELETE("/delete")
 	packageRouter.GET("/list")
 
-	itemRouter := apiRouter.Group("/item",checkLoginMiddleware)
+	itemRouter := apiRouter.Group("/item", checkLoginMiddleware)
 
 	itemRouter.POST("/add")
 	itemRouter.DELETE("/delete")
 	itemRouter.GET("/list")
 
-	uCenterRouter := apiRouter.Group("/userCenter",checkLoginMiddleware)
+	uCenterRouter := apiRouter.Group("/userCenter", checkLoginMiddleware)
 
-	uCenterRouter.POST("/user/add",api.AddUser)
-	uCenterRouter.DELETE("/user/delete",api.DeleteUser)
-	uCenterRouter.GET("/user/list",api.GetUser)
+	uCenterRouter.POST("/user", api.AddUser)
+	uCenterRouter.DELETE("/user/:id", api.DeleteUser)
+	uCenterRouter.GET("/user", api.GetUser)
 
-	uCenterRouter.POST("/group/add",api.AddGroup)
-	uCenterRouter.DELETE("/group/delete",api.DeleteGroup)
-	uCenterRouter.GET("/group/list",api.GetGroup)
+	uCenterRouter.POST("/group", api.AddGroup)
+	uCenterRouter.DELETE("/group/:id", api.DeleteGroup)
+	uCenterRouter.GET("/group", api.GetGroup)
 
 	router.Run(":" + strconv.Itoa(*port))
 }
@@ -79,13 +79,34 @@ func main() {
 func checkLoginMiddleware(ctx *gin.Context) {
 	session := sessions.Default(ctx)
 
-	if session.Get("username") != core.Conf.Username {
+	username := session.Get("username").(string)
+	if username == "" {
 		ctx.JSON(200, gin.H{
 			"code":    101,
 			"message": "unauthorized",
 		})
 
 		ctx.Abort()
+	}
+
+	if session.Get("username") != core.Conf.Username {
+		user, err := userCenter.GetUserByName(username)
+		if err != nil {
+			ctx.JSON(200, gin.H{
+				"code":    101,
+				"message": "user no found",
+			})
+
+			ctx.Abort()
+		}
+
+		if !user.HasGroup("admin") {
+			ctx.JSON(200, gin.H{
+				"code":    101,
+				"message": "permission denied",
+			})
+		}
+
 	}
 
 	ctx.Next()
