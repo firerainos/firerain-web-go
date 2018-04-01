@@ -47,23 +47,25 @@ func main() {
 	apiRouter.POST("/login", api.Login)
 
 	apiRouter.POST("/list/add", api.AddList)
-	apiRouter.GET("/list/list", checkLoginMiddleware, api.GetList)
-	apiRouter.DELETE("/list/delete", checkLoginMiddleware, api.DelList)
-	apiRouter.GET("/list/pass", checkLoginMiddleware, api.PassList)
+	apiRouter.GET("/list/list", checkAdminMiddleware, api.GetList)
+	apiRouter.DELETE("/list/delete", checkAdminMiddleware, api.DelList)
+	apiRouter.GET("/list/pass", checkAdminMiddleware, api.PassList)
 
-	packageRouter := apiRouter.Group("/package", checkLoginMiddleware)
+	packageRouter := apiRouter.Group("/package", checkAdminMiddleware)
 
-	packageRouter.POST("/add")
-	packageRouter.DELETE("/delete")
-	packageRouter.GET("/list")
+	packageRouter.GET("/")
+	packageRouter.POST("/")
+	packageRouter.DELETE("/:package")
+	packageRouter.PUT("/:package")
 
-	itemRouter := apiRouter.Group("/item", checkLoginMiddleware)
+	itemRouter := apiRouter.Group("/item", checkAdminMiddleware)
 
-	itemRouter.POST("/add")
-	itemRouter.DELETE("/delete")
-	itemRouter.GET("/list")
+	itemRouter.GET("/")
+	itemRouter.POST("/")
+	itemRouter.DELETE("/:item")
+	itemRouter.PUT("/:item")
 
-	uCenterRouter := apiRouter.Group("/userCenter", checkLoginMiddleware)
+	uCenterRouter := apiRouter.Group("/userCenter", checkAdminMiddleware)
 
 	uCenterRouter.POST("/user", api.AddUser)
 	uCenterRouter.DELETE("/user/:id", api.DeleteUser)
@@ -76,7 +78,7 @@ func main() {
 	router.Run(":" + strconv.Itoa(*port))
 }
 
-func checkLoginMiddleware(ctx *gin.Context) {
+func checkAdminMiddleware(ctx *gin.Context) {
 	session := sessions.Default(ctx)
 
 	username := session.Get("username").(string)
@@ -111,3 +113,37 @@ func checkLoginMiddleware(ctx *gin.Context) {
 
 	ctx.Next()
 }
+
+func checkPermissionMiddleware(ctx *gin.Context) {
+	session := sessions.Default(ctx)
+
+	username := session.Get("username").(string)
+	if username == "" {
+		ctx.JSON(200, gin.H{
+			"code":    101,
+			"message": "unauthorized",
+		})
+
+		ctx.Abort()
+	}
+
+	user, err := userCenter.GetUserByName(username)
+	if err != nil {
+		ctx.JSON(200, gin.H{
+			"code":    101,
+			"message": "user no found",
+		})
+
+		ctx.Abort()
+	}
+
+	if !user.HasGroup("insider") {
+		ctx.JSON(200, gin.H{
+			"code":    101,
+			"message": "permission denied",
+		})
+	}
+
+	ctx.Next()
+}
+
