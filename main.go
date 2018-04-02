@@ -40,10 +40,10 @@ func main() {
 
 	apiRouter.POST("/login", api.Login)
 
-	apiRouter.POST("/list/add", api.AddList)
-	apiRouter.GET("/list/list", checkAdminMiddleware, api.GetList)
-	apiRouter.DELETE("/list/delete", checkAdminMiddleware, api.DelList)
-	apiRouter.GET("/list/pass", checkAdminMiddleware, api.PassList)
+	apiRouter.GET("/list", checkAdminMiddleware, api.GetList)
+	apiRouter.POST("/list", api.AddList)
+	apiRouter.DELETE("/list/:id", checkAdminMiddleware, api.DelList)
+	apiRouter.PATCH("/list/:id", checkAdminMiddleware, api.PassList)
 
 	packageRouter := apiRouter.Group("/package", checkAdminMiddleware)
 

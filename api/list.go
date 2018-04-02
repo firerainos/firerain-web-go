@@ -59,7 +59,7 @@ func AddList(context *gin.Context) {
 }
 
 func DelList(context *gin.Context) {
-	id := context.Query("id")
+	id := context.Param("id")
 	db, err := core.GetSqlConn()
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
@@ -79,7 +79,7 @@ func DelList(context *gin.Context) {
 }
 
 func PassList(context *gin.Context) {
-	id := context.Query("id")
+	id := context.Param("id")
 	db, err := core.GetSqlConn()
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
