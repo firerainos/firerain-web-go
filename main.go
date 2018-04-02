@@ -83,8 +83,8 @@ func checkPermissionMiddleware(ctx *gin.Context) {
 func checkPermission(ctx *gin.Context,group string){
 	session := sessions.Default(ctx)
 
-	username := session.Get("username").(string)
-	if username == "" {
+	tmp := session.Get("username")
+	if tmp == nil {
 		ctx.JSON(200, gin.H{
 			"code":    101,
 			"message": "unauthorized",
@@ -92,6 +92,8 @@ func checkPermission(ctx *gin.Context,group string){
 
 		ctx.Abort()
 	}
+
+	username := tmp.(string)
 
 	user, err := userCenter.GetUserByName(username)
 	if err != nil {
