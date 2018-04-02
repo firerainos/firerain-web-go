@@ -25,7 +25,17 @@ func AddUser(username,password,email string,group []string) error {
 	}
 	defer db.Close()
 
-	return db.Create(&User{Username:username,Password:password,Email:email,Group:g}).Error
+
+	user := User{Username:username,Password:password,Email:email,Group:g}
+
+	user.Password = EncryptionPassword(user.Username,user.Password,user.Email)
+
+	err = db.Create(&user).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func GetUser() ([]User,error) {
@@ -51,7 +61,7 @@ func GetUserByName(name string) (User,error) {
 	}
 	defer db.Close()
 
-	if db.Where("name = ?",name).Preload("Group").First(&user).RecordNotFound() {
+	if db.Where("username = ?",name).Preload("Group").First(&user).RecordNotFound() {
 		return user, db.Error
 	}
 
