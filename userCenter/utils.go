@@ -3,23 +3,24 @@ package userCenter
 import (
 	"crypto/md5"
 	"crypto/sha256"
+	"encoding/hex"
 )
 
-func EncryptionPassword(user User) string {
-	username:= md5.Sum([]byte(user.Username))
-	password := md5.Sum([]byte(user.Password))
+func EncryptionPassword(username,password,email string) string {
+	usernameData:= md5.Sum([]byte(username))
+	passwordData := md5.Sum([]byte(password))
 
-	time := md5.Sum([]byte(user.CreatedAt.String()))
+	emailData := md5.Sum([]byte(email))
 
 	hash := sha256.New()
 
-	hash.Write(time[:])
+	hash.Write(emailData[:])
 	hash.Write([]byte("firerain"))
-	hash.Write(username[:])
-	hash.Write(password[:])
+	hash.Write(usernameData[:])
+	hash.Write(passwordData[:])
 
 	data := hash.Sum(nil)
 
-	return string(data)
+	return string(hex.EncodeToString(data))
 }
 
