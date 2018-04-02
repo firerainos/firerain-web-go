@@ -132,6 +132,7 @@ func initDB() {
 	if createUser {
 		userCenter.AddGroup("users", "user")
 		userCenter.AddGroup("admin", "administration")
+		userCenter.AddGroup("insider", "insider")
 	}
 
 	if createGroup {
