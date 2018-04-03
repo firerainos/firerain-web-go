@@ -7,7 +7,7 @@ import (
 
 type User struct {
 	gorm.Model
-	NickName string
+	Nickname string
 	Username string
 	Password string
 	Email string
@@ -27,7 +27,7 @@ func AddUser(nickname,username,password,email string,group []string) error {
 	defer db.Close()
 
 
-	user := User{NickName:nickname,Username:username,Password:password,Email:email,Group:g}
+	user := User{Nickname:nickname,Username:username,Password:password,Email:email,Group:g}
 
 	user.Password = EncryptionPassword(user.Username,user.Password,user.Email)
 
