@@ -76,7 +76,7 @@ func Signup(ctx *gin.Context) {
 		return
 	}
 
-	if db.Where("email = ?",data.Email).RecordNotFound() {
+	if db.Where("email = ? AND state = pass",data.Email).RecordNotFound() {
 		ctx.JSON(200, gin.H{
 			"code":    100,
 			"message": "this user is not eligible",
