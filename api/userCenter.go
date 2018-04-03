@@ -7,6 +7,7 @@ import (
 
 func AddUser(ctx *gin.Context) {
 	type Data struct {
+		Nickname string `json:"nickname" form:"nickname" binding:"required"`
 		Username string `json:"username" form:"username" binding:"required"`
 		Password string `json:"password" form:"username" binding:"required"`
 		Email string `json:"email" form:"email" binding:"required"`
@@ -23,7 +24,7 @@ func AddUser(ctx *gin.Context) {
 		return
 	}
 
-	if err := userCenter.AddUser(data.Username,data.Password,data.Email,data.Group); err != nil {
+	if err := userCenter.AddUser(data.Nickname,data.Username,data.Password,data.Email,data.Group); err != nil {
 		ctx.JSON(200,gin.H{
 			"code":104,
 			"message":err.Error(),

@@ -53,6 +53,7 @@ func Login(ctx *gin.Context) {
 func Signup(ctx *gin.Context) {
 	type Data struct {
 		User
+		Nickname string `json:"nickname" form:"nickname" binding:"required"`
 		Email string `json:"email" form:"email" binding:"required"`
 	}
 
@@ -80,7 +81,7 @@ func Signup(ctx *gin.Context) {
 			"code":    100,
 			"message": "this user is not eligible",
 		})
-	} else if err :=userCenter.AddUser(data.Username,data.Password,data.Email,[]string{"users","insider"});err!=nil{
+	} else if err :=userCenter.AddUser(data.Nickname,data.Username,data.Password,data.Email,[]string{"users","insider"});err!=nil{
 		ctx.JSON(200,gin.H{
 			"code":100,
 			"message": "signup failure",
