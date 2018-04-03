@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/sessions"
 	"github.com/firerainos/firerain-web-go/userCenter"
+	"github.com/firerainos/firerain-web-go/core"
 )
 
 type User struct {
@@ -45,6 +46,48 @@ func Login(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{
 			"code":    100,
 			"message": "username or password errors",
+		})
+	}
+}
+
+func Signup(ctx *gin.Context) {
+	type Data struct {
+		User
+		Email string `json:"email" form:"email" binding:"required"`
+	}
+
+	data := Data{}
+
+	if err:=ctx.Bind(&data);err != nil {
+		ctx.JSON(400, gin.H{
+			"code":    105,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	db,err := core.GetSqlConn()
+	if err != nil {
+		ctx.JSON(400, gin.H{
+			"code":    105,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	if db.Where("email = ?",data.Email).RecordNotFound() {
+		ctx.JSON(200, gin.H{
+			"code":    100,
+			"message": "this user is not eligible",
+		})
+	} else if err :=userCenter.AddUser(data.Username,data.Password,data.Email,[]string{"users","insider"});err!=nil{
+		ctx.JSON(200,gin.H{
+			"code":100,
+			"message": "signup failure",
+		})
+	} else {
+		ctx.JSON(200,gin.H{
+			"code":0,
 		})
 	}
 }

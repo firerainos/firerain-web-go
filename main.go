@@ -39,6 +39,7 @@ func main() {
 	apiRouter.GET("/installer/package/:de", api.GetPackage)
 
 	apiRouter.POST("/login", api.Login)
+	apiRouter.POST("/signup", api.Signup)
 
 	apiRouter.GET("/list", checkAdminMiddleware, api.GetList)
 	apiRouter.POST("/list", api.AddList)
