@@ -7,13 +7,14 @@ import (
 
 type User struct {
 	gorm.Model
+	NickName string
 	Username string
 	Password string
 	Email string
 	Group []Group `gorm:"many2many:user_group"`
 }
 
-func AddUser(username,password,email string,group []string) error {
+func AddUser(nickname,username,password,email string,group []string) error {
 	g,err := GetGroupByNames(group)
 	if err != nil {
 		return err
@@ -26,7 +27,7 @@ func AddUser(username,password,email string,group []string) error {
 	defer db.Close()
 
 
-	user := User{Username:username,Password:password,Email:email,Group:g}
+	user := User{NickName:nickname,Username:username,Password:password,Email:email,Group:g}
 
 	user.Password = EncryptionPassword(user.Username,user.Password,user.Email)
 

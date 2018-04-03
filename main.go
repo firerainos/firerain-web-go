@@ -139,7 +139,7 @@ func initDB() {
 	}
 
 	if createGroup {
-		userCenter.AddUser("admin", "admin", "", []string{"users", "admin"})
+		userCenter.AddUser("admin","admin", "admin", "", []string{"users", "admin"})
 	}
 
 	db.Close()
