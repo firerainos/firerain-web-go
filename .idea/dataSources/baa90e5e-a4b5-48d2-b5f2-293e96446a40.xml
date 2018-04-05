@@ -1121,10 +1121,15 @@ group_id</ColNames>
       <DataType>varchar(255)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="274" parent="243" name="idx_users_deleted_at">
+    <column id="274" parent="243" name="nickname">
+      <Position>8</Position>
+      <DataType>varchar(255)|0s</DataType>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <index id="275" parent="243" name="idx_users_deleted_at">
       <ColNames>deleted_at</ColNames>
     </index>
-    <key id="275" parent="243" name="PRIMARY">
+    <key id="276" parent="243" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
