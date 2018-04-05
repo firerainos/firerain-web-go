@@ -16,3 +16,6 @@
 .config.json
 
 .idea/
+
+!assets/avatar/default.svg
+assets/avatar/

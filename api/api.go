@@ -5,6 +5,8 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/firerainos/firerain-web-go/userCenter"
 	"github.com/firerainos/firerain-web-go/core"
+	"os"
+	"io"
 )
 
 type User struct {
@@ -90,5 +92,53 @@ func Signup(ctx *gin.Context) {
 		ctx.JSON(200,gin.H{
 			"code":0,
 		})
+	}
+}
+
+func UploadAvatar(ctx *gin.Context) {
+	session := sessions.Default(ctx)
+
+	username := ctx.PostForm("username")
+	user := session.Get("username")
+	if user != nil && username == user.(string) {
+		avatar,_,err := ctx.Request.FormFile("avatar")
+		if err != nil {
+			ctx.JSON(200, gin.H{
+				"code":    105,
+				"message": err.Error(),
+			})
+		} else {
+			file,err:=os.Create("./assets/avatar/"+username)
+			if err!=nil{
+				ctx.JSON(200, gin.H{
+					"code":    105,
+					"message": err.Error(),
+				})
+				return
+			}
+
+			defer file.Close()
+
+			io.Copy(file,avatar)
+			ctx.JSON(200, gin.H{
+				"code":    0,
+			})
+		}
+	}else {
+		ctx.JSON(200, gin.H{
+			"code":    105,
+			"message": "permission denied",
+		})
+	}
+
+}
+
+func GetAvatar(ctx *gin.Context) {
+	username := ctx.Param("username")
+	path := "./assets/avatar/"+username
+	if _, err := os.Stat(path); err != nil {
+		ctx.File("./assets/avatar/default.svg")
+	}else {
+		ctx.File(path)
 	}
 }

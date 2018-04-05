@@ -41,6 +41,9 @@ func main() {
 	apiRouter.POST("/login", api.Login)
 	apiRouter.POST("/signup", api.Signup)
 
+	apiRouter.GET("/avatar/:username",api.GetAvatar)
+	apiRouter.POST("/avatar",api.UploadAvatar)
+
 	apiRouter.GET("/list", checkAdminMiddleware, api.GetList)
 	apiRouter.POST("/list", api.AddList)
 	apiRouter.DELETE("/list/:id", checkAdminMiddleware, api.DelList)

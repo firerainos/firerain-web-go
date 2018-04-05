@@ -3,6 +3,7 @@ package userCenter
 import (
 	"github.com/jinzhu/gorm"
 	"github.com/firerainos/firerain-web-go/core"
+	"os"
 )
 
 type User struct {
@@ -93,6 +94,7 @@ func (user User) Delete() error {
 	defer db.Close()
 
 	db.Delete(user)
+	os.Remove("./assets/avatar/"+user.Username)
 
 	return nil
 }
