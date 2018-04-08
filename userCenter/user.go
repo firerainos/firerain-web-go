@@ -9,9 +9,9 @@ import (
 type User struct {
 	gorm.Model
 	Nickname string
-	Username string
+	Username string `gorm:"type:varchar(100);unique"`
 	Password string
-	Email string
+	Email string `gorm:"type:varchar(100);unique"`
 	Group []Group `gorm:"many2many:user_group"`
 }
 

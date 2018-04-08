@@ -8,7 +8,7 @@ import (
 
 type Group struct {
 	gorm.Model
-	Name string
+	Name string `gorm:"type:varchar(100);unique"`
 	Description string
 }
 
