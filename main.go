@@ -36,8 +36,6 @@ func main() {
 
 	apiRouter := router.Group("/api")
 
-	apiRouter.GET("/installer/package/:de", api.GetPackage)
-
 	apiRouter.POST("/login", api.Login)
 	apiRouter.POST("/signup", api.Signup)
 
@@ -49,19 +47,19 @@ func main() {
 	apiRouter.DELETE("/list/:id", checkAdminMiddleware, api.DelList)
 	apiRouter.PATCH("/list/:id", checkAdminMiddleware, api.PassList)
 
-	packageRouter := apiRouter.Group("/package", checkAdminMiddleware)
+	packageRouter := apiRouter.Group("/package")
 
-	packageRouter.GET("/")
-	packageRouter.POST("/")
-	packageRouter.DELETE("/:package")
-	packageRouter.PUT("/:package")
+	packageRouter.GET("",api.GetPackages)
+	packageRouter.POST("", api.AddPackage)
+	packageRouter.DELETE("/:id",api.DeletePackage)
+	packageRouter.PUT("/:id",api.EditPackage)
 
-	itemRouter := apiRouter.Group("/item", checkAdminMiddleware)
+	itemRouter := apiRouter.Group("/item")
 
-	itemRouter.GET("/")
-	itemRouter.POST("/")
-	itemRouter.DELETE("/:item")
-	itemRouter.PUT("/:item")
+	itemRouter.GET("",api.GetItems)
+	itemRouter.POST("",api.AddItem)
+	itemRouter.DELETE("/:id",api.DeleteItem)
+	itemRouter.PUT("/:id",api.EditItem)
 
 	uCenterRouter := apiRouter.Group("/userCenter", checkAdminMiddleware)
 
@@ -131,9 +129,7 @@ func initDB() {
 	createUser = !db.HasTable(&userCenter.Group{})
 	createGroup = !db.HasTable(&userCenter.User{})
 
-	db.AutoMigrate(&api.List{})
-	db.AutoMigrate(&userCenter.User{})
-	db.AutoMigrate(&userCenter.Group{})
+	db.AutoMigrate(&api.List{},&userCenter.User{},&userCenter.Group{},&api.Package{},&api.Item{})
 
 	if createUser {
 		userCenter.AddGroup("users", "user")
