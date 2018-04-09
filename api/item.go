@@ -60,7 +60,7 @@ func DeleteItem(ctx *gin.Context) {
 	}
 	defer db.Close()
 
-	if err := db.Delete(&Item{},id).Error;err!=nil{
+	if err := db.Unscoped().Delete(&Item{},id).Error;err!=nil{
 		ctx.JSON(200,gin.H{
 			"code":107,
 			"message":err.Error(),
