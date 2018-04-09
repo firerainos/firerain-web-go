@@ -8,7 +8,7 @@ import (
 
 type Package struct {
 	gorm.Model
-	ItemId      int `json:"itemId" form:"itemId" binding:"required"`
+	ItemID      uint `json:"itemId" form:"itemId" binding:"required"`
 	Name        string `json:"name" form:"name" binding:"required" gorm:"type:varchar(100);unique"`
 	Description string `json:"description" form:"description"`
 }

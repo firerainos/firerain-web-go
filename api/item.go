@@ -10,7 +10,7 @@ import (
 type Item struct {
 	gorm.Model
 	Name string `json:"name" form:"name" gorm:"type:varchar(100);unique" binding:"required"`
-	packages []Package
+	Packages []Package
 }
 
 func AddItem(ctx *gin.Context) {
@@ -130,7 +130,7 @@ func GetItems(ctx *gin.Context) {
 	}
 	defer db.Close()
 
-	db.Find(&items)
+	db.Preload("Packages").Find(&items)
 
 	ctx.JSON(200,gin.H{
 		"code":0,
