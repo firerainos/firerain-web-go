@@ -49,17 +49,17 @@ func main() {
 
 	packageRouter := apiRouter.Group("/package")
 
-	packageRouter.GET("",api.GetPackages,checkPermissionMiddleware)
-	packageRouter.POST("", api.AddPackage,checkAdminMiddleware)
-	packageRouter.DELETE("/:id",api.DeletePackage,checkAdminMiddleware)
-	packageRouter.PUT("/:id",api.EditPackage,checkAdminMiddleware)
+	packageRouter.GET("",checkPermissionMiddleware,api.GetPackages)
+	packageRouter.POST("",checkAdminMiddleware, api.AddPackage)
+	packageRouter.DELETE("/:id",checkAdminMiddleware,api.DeletePackage)
+	packageRouter.PUT("/:id",checkAdminMiddleware,api.EditPackage)
 
 	itemRouter := apiRouter.Group("/item")
 
-	itemRouter.GET("",api.GetItems,checkPermissionMiddleware)
-	itemRouter.POST("",api.AddItem,checkAdminMiddleware)
-	itemRouter.DELETE("/:id",api.DeleteItem,checkAdminMiddleware)
-	itemRouter.PUT("/:id",api.EditItem,checkAdminMiddleware)
+	itemRouter.GET("",checkPermissionMiddleware,api.GetItems)
+	itemRouter.POST("",checkAdminMiddleware,api.AddItem)
+	itemRouter.DELETE("/:id",checkAdminMiddleware,api.DeleteItem)
+	itemRouter.PUT("/:id",checkAdminMiddleware,api.EditItem)
 
 	uCenterRouter := apiRouter.Group("/userCenter", checkAdminMiddleware)
 
