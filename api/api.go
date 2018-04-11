@@ -96,6 +96,25 @@ func Signup(ctx *gin.Context) {
 	}
 }
 
+func Logout(ctx *gin.Context) {
+	session := sessions.Default(ctx)
+
+	user := session.Get("username")
+	if user != nil {
+		session.Set("username",nil)
+		session.Save()
+		ctx.JSON(200,gin.H{
+			"code":0,
+		})
+	} else{
+		ctx.JSON(200,gin.H{
+			"code":105,
+			"message":"no login",
+		})
+	}
+
+}
+
 func UploadAvatar(ctx *gin.Context) {
 	session := sessions.Default(ctx)
 

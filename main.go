@@ -38,6 +38,7 @@ func main() {
 	apiRouter := router.Group("/api")
 
 	apiRouter.POST("/login", api.Login)
+	apiRouter.POST("/logout", api.Logout)
 	apiRouter.POST("/signup", api.Signup)
 
 	apiRouter.GET("/avatar/:username",api.GetAvatar)
