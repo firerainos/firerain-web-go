@@ -3,6 +3,8 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/firerainos/firerain-web-go/userCenter"
+	"strconv"
+	"github.com/gin-contrib/sessions"
 )
 
 func AddUser(ctx *gin.Context) {
@@ -86,6 +88,68 @@ func GetUser(ctx *gin.Context) {
 		"code":0,
 		"users": users,
 	})
+}
+
+func EditUser(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	i,err:=strconv.Atoi(id)
+	if err != nil {
+		ctx.JSON(200,gin.H{
+			"code":104,
+			"message":"id must int",
+		})
+		return
+	}
+
+	user,err := userCenter.GetUserById(i)
+
+	session := sessions.Default(ctx)
+
+	tmp := session.Get("username")
+	if tmp == nil {
+		ctx.JSON(200, gin.H{
+			"code":    101,
+			"message": "unauthorized",
+		})
+
+		return
+	}
+
+	if user.Username!=tmp.(string) {
+		ctx.JSON(200, gin.H{
+			"code":    101,
+			"message": "unauthorized",
+		})
+
+		return
+	}
+
+	type Data struct {
+		Nickname string `json:"nickname" form:"nickname"`
+		Password string `json:"password" form:"password"`
+	}
+
+	data := Data{}
+
+	if err := ctx.Bind(&data);err != nil {
+		ctx.JSON(400, gin.H{
+			"code":104,
+			"message":err.Error(),
+		})
+		return
+	}
+
+	if err = user.Edit(data.Nickname,data.Password);err!=nil{
+		ctx.JSON(200,gin.H{
+			"code":104,
+			"message":err.Error(),
+		})
+	}else{
+		ctx.JSON(200,gin.H{
+			"code":0,
+		})
+	}
 }
 
 

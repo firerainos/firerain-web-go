@@ -11,6 +11,7 @@ import (
 	"github.com/firerainos/firerain-web-go/userCenter"
 	"strconv"
 	"log"
+	"strings"
 )
 
 var port = flag.Int("p", 8080, "port")
@@ -63,9 +64,10 @@ func main() {
 
 	uCenterRouter := apiRouter.Group("/userCenter", checkAdminMiddleware)
 
+	uCenterRouter.GET("/user", api.GetUser)
 	uCenterRouter.POST("/user", api.AddUser)
 	uCenterRouter.DELETE("/user/:id", api.DeleteUser)
-	uCenterRouter.GET("/user", api.GetUser)
+	uCenterRouter.PATCH("/user/:id", api.EditUser)
 
 	uCenterRouter.POST("/group", api.AddGroup)
 	uCenterRouter.DELETE("/group/:name", api.DeleteGroup)
@@ -75,7 +77,9 @@ func main() {
 }
 
 func checkAdminMiddleware(ctx *gin.Context) {
-	checkPermission(ctx,"admin")
+	if !strings.Contains(ctx.Request.RequestURI, "/api/userCenter/user") && ctx.Request.Method != "PATCH" {
+		checkPermission(ctx,"admin")
+	}
 }
 
 func checkPermissionMiddleware(ctx *gin.Context) {

@@ -116,6 +116,26 @@ func (user User) AddGroup(group string) error {
 	return db.Save(user).Error
 }
 
+func (user User) Edit(nickName,password string) error {
+	db,err := core.GetSqlConn()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	tmp := User{}
+
+	if nickName != "" {
+		tmp.Nickname = nickName
+	}
+
+	if password != "" {
+		tmp.Password = EncryptionPassword(user.Username,password,user.Email)
+	}
+
+	return db.Model(&user).Update(tmp).Error
+}
+
 func (user User) DeleteGroup(group string) error {
 	var groups []Group
 	for _,g := range user.Group {
