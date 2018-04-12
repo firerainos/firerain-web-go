@@ -106,7 +106,7 @@ func EditItem(ctx *gin.Context) {
 	}
 	defer db.Close()
 
-	if err:= db.Model(&item).Update("name",item.Name,"title",item.Title).Error;err!= nil{
+	if err:= db.Model(&item).Update(&item).Error;err!= nil{
 		ctx.JSON(200,gin.H{
 			"code":107,
 			"message":err.Error(),
