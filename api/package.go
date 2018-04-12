@@ -8,13 +8,14 @@ import (
 
 type Package struct {
 	gorm.Model
-	ItemID      uint `json:"itemId" form:"itemId" binding:"required"`
+	ItemID      uint `json:"itemID" form:"itemID" binding:"required"`
 	Name        string `json:"name" form:"name" binding:"required" gorm:"type:varchar(100);unique"`
 	Description string `json:"description" form:"description"`
 }
 
 func AddPackage(ctx *gin.Context) {
 	pkg := Package{}
+
 	if err := ctx.Bind(&pkg); err != nil {
 		ctx.JSON(400, gin.H{
 			"code":    106,
