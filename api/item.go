@@ -10,6 +10,7 @@ import (
 type Item struct {
 	gorm.Model
 	Name string `json:"name" form:"name" gorm:"type:varchar(100);unique" binding:"required"`
+	Title string `json:"title" form:"title" gorm:"type:varchar(100);unique" binding:"required"`
 	Packages []Package
 }
 
@@ -105,7 +106,7 @@ func EditItem(ctx *gin.Context) {
 	}
 	defer db.Close()
 
-	if err:= db.Model(&item).Update("name",item.Name).Error;err!= nil{
+	if err:= db.Model(&item).Update("name",item.Name,"title",item.Title).Error;err!= nil{
 		ctx.JSON(200,gin.H{
 			"code":107,
 			"message":err.Error(),
