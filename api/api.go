@@ -41,6 +41,7 @@ func Login(ctx *gin.Context) {
 		session.Set("username", user.Username)
 		session.Save()
 
+		u.Password=""
 		ctx.JSON(200, gin.H{
 			"code": "0",
 			"user": u,
