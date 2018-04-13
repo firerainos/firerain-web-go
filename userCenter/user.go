@@ -1,8 +1,8 @@
 package userCenter
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/firerainos/firerain-web-go/core"
+	"github.com/jinzhu/gorm"
 	"os"
 )
 
@@ -11,26 +11,25 @@ type User struct {
 	Nickname string
 	Username string `gorm:"type:varchar(100);unique"`
 	Password string
-	Email string `gorm:"type:varchar(100);unique"`
-	Group []Group `gorm:"many2many:user_group"`
+	Email    string  `gorm:"type:varchar(100);unique"`
+	Group    []Group `gorm:"many2many:user_group"`
 }
 
-func AddUser(nickname,username,password,email string,group []string) error {
-	g,err := GetGroupByNames(group)
+func AddUser(nickname, username, password, email string, group []string) error {
+	g, err := GetGroupByNames(group)
 	if err != nil {
 		return err
 	}
 
-	db,err := core.GetSqlConn()
+	db, err := core.GetSqlConn()
 	if err != nil {
 		return err
 	}
 	defer db.Close()
 
+	user := User{Nickname: nickname, Username: username, Password: password, Email: email, Group: g}
 
-	user := User{Nickname:nickname,Username:username,Password:password,Email:email,Group:g}
-
-	user.Password = EncryptionPassword(user.Username,user.Password,user.Email)
+	user.Password = EncryptionPassword(user.Username, user.Password, user.Email)
 
 	err = db.Create(&user).Error
 	if err != nil {
@@ -40,12 +39,12 @@ func AddUser(nickname,username,password,email string,group []string) error {
 	return nil
 }
 
-func GetUser() ([]User,error) {
+func GetUser() ([]User, error) {
 	var users []User
 
-	db,err := core.GetSqlConn()
+	db, err := core.GetSqlConn()
 	if err != nil {
-		return users,err
+		return users, err
 	}
 	defer db.Close()
 
@@ -54,32 +53,32 @@ func GetUser() ([]User,error) {
 	return users, nil
 }
 
-func GetUserByName(name string) (User,error) {
+func GetUserByName(name string) (User, error) {
 	var user User
 
-	db,err := core.GetSqlConn()
+	db, err := core.GetSqlConn()
 	if err != nil {
-		return user,err
+		return user, err
 	}
 	defer db.Close()
 
-	if db.Where("username = ?",name).Preload("Group").First(&user).RecordNotFound() {
+	if db.Where("username = ?", name).Preload("Group").First(&user).RecordNotFound() {
 		return user, db.Error
 	}
 
 	return user, nil
 }
 
-func GetUserById(id int) (User,error) {
+func GetUserById(id int) (User, error) {
 	var user User
 
-	db,err := core.GetSqlConn()
+	db, err := core.GetSqlConn()
 	if err != nil {
-		return user,err
+		return user, err
 	}
 	defer db.Close()
 
-	if db.Where("id = ?",id).Preload("Group").First(&user).RecordNotFound() {
+	if db.Where("id = ?", id).Preload("Group").First(&user).RecordNotFound() {
 		return user, db.Error
 	}
 
@@ -87,27 +86,27 @@ func GetUserById(id int) (User,error) {
 }
 
 func (user User) Delete() error {
-	db,err := core.GetSqlConn()
+	db, err := core.GetSqlConn()
 	if err != nil {
 		return err
 	}
 	defer db.Close()
 
 	db.Delete(user)
-	os.Remove("./assets/avatar/"+user.Username)
+	os.Remove("./assets/avatar/" + user.Username)
 
 	return nil
 }
 
 func (user User) AddGroup(group string) error {
-	g,err := GetGroupByName(group)
+	g, err := GetGroupByName(group)
 	if err != nil {
 		return err
 	}
 
 	user.Group = append(user.Group, g)
 
-	db,err := core.GetSqlConn()
+	db, err := core.GetSqlConn()
 	if err != nil {
 		return err
 	}
@@ -116,8 +115,8 @@ func (user User) AddGroup(group string) error {
 	return db.Save(user).Error
 }
 
-func (user User) Edit(nickName,password string) error {
-	db,err := core.GetSqlConn()
+func (user User) Edit(nickName, password string) error {
+	db, err := core.GetSqlConn()
 	if err != nil {
 		return err
 	}
@@ -130,7 +129,7 @@ func (user User) Edit(nickName,password string) error {
 	}
 
 	if password != "" {
-		tmp.Password = EncryptionPassword(user.Username,password,user.Email)
+		tmp.Password = EncryptionPassword(user.Username, password, user.Email)
 	}
 
 	return db.Model(&user).Update(tmp).Error
@@ -138,7 +137,7 @@ func (user User) Edit(nickName,password string) error {
 
 func (user User) DeleteGroup(group string) error {
 	var groups []Group
-	for _,g := range user.Group {
+	for _, g := range user.Group {
 		if g.Name != group {
 			groups = append(groups, g)
 		}
@@ -146,7 +145,7 @@ func (user User) DeleteGroup(group string) error {
 
 	user.Group = groups
 
-	db,err := core.GetSqlConn()
+	db, err := core.GetSqlConn()
 	if err != nil {
 		return err
 	}
@@ -156,7 +155,7 @@ func (user User) DeleteGroup(group string) error {
 }
 
 func (user User) HasGroup(group string) bool {
-	for _,g := range user.Group {
+	for _, g := range user.Group {
 		if g.Name == group {
 			return true
 		}

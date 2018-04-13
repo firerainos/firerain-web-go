@@ -1,12 +1,12 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/gin-contrib/sessions"
-	"github.com/firerainos/firerain-web-go/userCenter"
 	"github.com/firerainos/firerain-web-go/core"
-	"os"
+	"github.com/firerainos/firerain-web-go/userCenter"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
 	"io"
+	"os"
 )
 
 type User struct {
@@ -35,13 +35,13 @@ func Login(ctx *gin.Context) {
 		})
 	}
 
-	password := userCenter.EncryptionPassword(u.Username,user.Password,u.Email)
+	password := userCenter.EncryptionPassword(u.Username, user.Password, u.Email)
 
 	if u.Password == password {
 		session.Set("username", user.Username)
 		session.Save()
 
-		u.Password=""
+		u.Password = ""
 		ctx.JSON(200, gin.H{
 			"code": "0",
 			"user": u,
@@ -58,12 +58,12 @@ func Signup(ctx *gin.Context) {
 	type Data struct {
 		User
 		Nickname string `json:"nickname" form:"nickname" binding:"required"`
-		Email string `json:"email" form:"email" binding:"required"`
+		Email    string `json:"email" form:"email" binding:"required"`
 	}
 
 	data := Data{}
 
-	if err:=ctx.Bind(&data);err != nil {
+	if err := ctx.Bind(&data); err != nil {
 		ctx.JSON(400, gin.H{
 			"code":    105,
 			"message": err.Error(),
@@ -71,7 +71,7 @@ func Signup(ctx *gin.Context) {
 		return
 	}
 
-	db,err := core.GetSqlConn()
+	db, err := core.GetSqlConn()
 	if err != nil {
 		ctx.JSON(400, gin.H{
 			"code":    105,
@@ -80,19 +80,19 @@ func Signup(ctx *gin.Context) {
 		return
 	}
 
-	if db.Where("email = ? AND state = pass",data.Email).RecordNotFound() {
+	if db.Where("email = ? AND state = pass", data.Email).RecordNotFound() {
 		ctx.JSON(200, gin.H{
 			"code":    100,
 			"message": "this user is not eligible",
 		})
-	} else if err :=userCenter.AddUser(data.Nickname,data.Username,data.Password,data.Email,[]string{"users","insider"});err!=nil{
-		ctx.JSON(200,gin.H{
-			"code":100,
+	} else if err := userCenter.AddUser(data.Nickname, data.Username, data.Password, data.Email, []string{"users", "insider"}); err != nil {
+		ctx.JSON(200, gin.H{
+			"code":    100,
 			"message": "signup failure",
 		})
 	} else {
-		ctx.JSON(200,gin.H{
-			"code":0,
+		ctx.JSON(200, gin.H{
+			"code": 0,
 		})
 	}
 }
@@ -102,15 +102,15 @@ func Logout(ctx *gin.Context) {
 
 	user := session.Get("username")
 	if user != nil {
-		session.Set("username",nil)
+		session.Set("username", nil)
 		session.Save()
-		ctx.JSON(200,gin.H{
-			"code":0,
+		ctx.JSON(200, gin.H{
+			"code": 0,
 		})
-	} else{
-		ctx.JSON(200,gin.H{
-			"code":105,
-			"message":"no login",
+	} else {
+		ctx.JSON(200, gin.H{
+			"code":    105,
+			"message": "no login",
 		})
 	}
 
@@ -122,15 +122,15 @@ func UploadAvatar(ctx *gin.Context) {
 	username := ctx.PostForm("username")
 	user := session.Get("username")
 	if user != nil && username == user.(string) {
-		avatar,_,err := ctx.Request.FormFile("avatar")
+		avatar, _, err := ctx.Request.FormFile("avatar")
 		if err != nil {
 			ctx.JSON(200, gin.H{
 				"code":    105,
 				"message": err.Error(),
 			})
 		} else {
-			file,err:=os.Create("./assets/avatar/"+username)
-			if err!=nil{
+			file, err := os.Create("./assets/avatar/" + username)
+			if err != nil {
 				ctx.JSON(200, gin.H{
 					"code":    105,
 					"message": err.Error(),
@@ -140,12 +140,12 @@ func UploadAvatar(ctx *gin.Context) {
 
 			defer file.Close()
 
-			io.Copy(file,avatar)
+			io.Copy(file, avatar)
 			ctx.JSON(200, gin.H{
-				"code":    0,
+				"code": 0,
 			})
 		}
-	}else {
+	} else {
 		ctx.JSON(200, gin.H{
 			"code":    105,
 			"message": "permission denied",
@@ -156,10 +156,10 @@ func UploadAvatar(ctx *gin.Context) {
 
 func GetAvatar(ctx *gin.Context) {
 	username := ctx.Param("username")
-	path := "./assets/avatar/"+username
+	path := "./assets/avatar/" + username
 	if _, err := os.Stat(path); err != nil {
 		ctx.File("./assets/avatar/default.svg")
-	}else {
+	} else {
 		ctx.File(path)
 	}
 }

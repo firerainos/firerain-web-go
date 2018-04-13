@@ -1,48 +1,48 @@
 package api
 
 import (
-	"github.com/jinzhu/gorm"
-	"github.com/gin-gonic/gin"
 	"github.com/firerainos/firerain-web-go/core"
+	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 	"strconv"
 )
 
 type Item struct {
 	gorm.Model
-	Name string `json:"name" form:"name" gorm:"type:varchar(100);unique" binding:"required"`
-	Title string `json:"title" form:"title" gorm:"type:varchar(100);unique" binding:"required"`
+	Name     string `json:"name" form:"name" gorm:"type:varchar(100);unique" binding:"required"`
+	Title    string `json:"title" form:"title" gorm:"type:varchar(100);unique" binding:"required"`
 	Packages []Package
 }
 
 func AddItem(ctx *gin.Context) {
 	item := Item{}
 
-	if err := ctx.Bind(&item);err!=nil{
-		ctx.JSON(400,gin.H{
-			"code":107,
-			"message":"name not null",
+	if err := ctx.Bind(&item); err != nil {
+		ctx.JSON(400, gin.H{
+			"code":    107,
+			"message": "name not null",
 		})
 		return
 	}
 
-	db,err := core.GetSqlConn()
+	db, err := core.GetSqlConn()
 	if err != nil {
-		ctx.JSON(200,gin.H{
-			"code":107,
-			"message":err.Error(),
+		ctx.JSON(200, gin.H{
+			"code":    107,
+			"message": err.Error(),
 		})
 		return
 	}
 	defer db.Close()
 
-	if err :=db.Create(&item).Error;err!=nil{
-		ctx.JSON(200,gin.H{
-			"code":107,
-			"message":err.Error(),
+	if err := db.Create(&item).Error; err != nil {
+		ctx.JSON(200, gin.H{
+			"code":    107,
+			"message": err.Error(),
 		})
-	}else{
-		ctx.JSON(200,gin.H{
-			"code":0,
+	} else {
+		ctx.JSON(200, gin.H{
+			"code": 0,
 		})
 	}
 
@@ -51,24 +51,24 @@ func AddItem(ctx *gin.Context) {
 func DeleteItem(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	db,err := core.GetSqlConn()
+	db, err := core.GetSqlConn()
 	if err != nil {
-		ctx.JSON(200,gin.H{
-			"code":107,
-			"message":err.Error(),
+		ctx.JSON(200, gin.H{
+			"code":    107,
+			"message": err.Error(),
 		})
 		return
 	}
 	defer db.Close()
 
-	if err := db.Unscoped().Delete(&Item{},id).Error;err!=nil{
-		ctx.JSON(200,gin.H{
-			"code":107,
-			"message":err.Error(),
+	if err := db.Unscoped().Delete(&Item{}, id).Error; err != nil {
+		ctx.JSON(200, gin.H{
+			"code":    107,
+			"message": err.Error(),
 		})
-	}else{
-		ctx.JSON(200,gin.H{
-			"code":0,
+	} else {
+		ctx.JSON(200, gin.H{
+			"code": 0,
 		})
 	}
 }
@@ -78,40 +78,40 @@ func EditItem(ctx *gin.Context) {
 
 	item := Item{}
 
-	if err := ctx.Bind(&item);err!=nil{
-		ctx.JSON(400,gin.H{
-			"code":107,
-			"message":"name not null",
+	if err := ctx.Bind(&item); err != nil {
+		ctx.JSON(400, gin.H{
+			"code":    107,
+			"message": "name not null",
 		})
 		return
 	}
 
-	tmp,err:=strconv.ParseUint(id,10,32)
+	tmp, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
-		ctx.JSON(200,gin.H{
-			"code":107,
-			"message":"id must int",
+		ctx.JSON(200, gin.H{
+			"code":    107,
+			"message": "id must int",
 		})
 		return
 	}
-	item.ID=uint(tmp)
+	item.ID = uint(tmp)
 
-	db,err := core.GetSqlConn()
+	db, err := core.GetSqlConn()
 	if err != nil {
-		ctx.JSON(200,gin.H{
-			"code":107,
-			"message":err.Error(),
+		ctx.JSON(200, gin.H{
+			"code":    107,
+			"message": err.Error(),
 		})
 		return
 	}
 	defer db.Close()
 
-	if err:= db.Model(&item).Update(&item).Error;err!= nil{
-		ctx.JSON(200,gin.H{
-			"code":107,
-			"message":err.Error(),
+	if err := db.Model(&item).Update(&item).Error; err != nil {
+		ctx.JSON(200, gin.H{
+			"code":    107,
+			"message": err.Error(),
 		})
-	}else {
+	} else {
 		ctx.JSON(200, gin.H{
 			"code": 0,
 		})
@@ -121,11 +121,11 @@ func EditItem(ctx *gin.Context) {
 func GetItems(ctx *gin.Context) {
 	var items []Item
 
-	db,err := core.GetSqlConn()
+	db, err := core.GetSqlConn()
 	if err != nil {
-		ctx.JSON(200,gin.H{
-			"code":107,
-			"message":err.Error(),
+		ctx.JSON(200, gin.H{
+			"code":    107,
+			"message": err.Error(),
 		})
 		return
 	}
@@ -133,10 +133,8 @@ func GetItems(ctx *gin.Context) {
 
 	db.Preload("Packages").Find(&items)
 
-	ctx.JSON(200,gin.H{
-		"code":0,
-		"items":items,
+	ctx.JSON(200, gin.H{
+		"code":  0,
+		"items": items,
 	})
 }
-
-

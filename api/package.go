@@ -1,14 +1,14 @@
 package api
 
 import (
-	"github.com/jinzhu/gorm"
-	"github.com/gin-gonic/gin"
 	"github.com/firerainos/firerain-web-go/core"
+	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 )
 
 type Package struct {
 	gorm.Model
-	ItemID      uint `json:"itemID" form:"itemID" binding:"required"`
+	ItemID      uint   `json:"itemID" form:"itemID" binding:"required"`
 	Name        string `json:"name" form:"name" binding:"required" gorm:"type:varchar(100);unique"`
 	Description string `json:"description" form:"description"`
 }
@@ -67,12 +67,12 @@ func EditPackage(ctx *gin.Context) {
 	}
 	defer db.Close()
 
-	if err := db.Model(&pkg).Where("id=?",id).Update(&pkg).Error;err!=nil{
+	if err := db.Model(&pkg).Where("id=?", id).Update(&pkg).Error; err != nil {
 		ctx.JSON(200, gin.H{
-			"code": 106,
-			"message":err.Error(),
+			"code":    106,
+			"message": err.Error(),
 		})
-	}else {
+	} else {
 		ctx.JSON(200, gin.H{
 			"code": 0,
 		})
@@ -118,8 +118,8 @@ func GetPackages(ctx *gin.Context) {
 	var packages []Package
 	db.Find(&packages)
 
-	ctx.JSON(200,gin.H{
-		"code": 0,
-		"packages":packages,
+	ctx.JSON(200, gin.H{
+		"code":     0,
+		"packages": packages,
 	})
 }

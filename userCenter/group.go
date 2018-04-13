@@ -1,25 +1,25 @@
 package userCenter
 
 import (
-	"github.com/jinzhu/gorm"
-	"github.com/firerainos/firerain-web-go/core"
 	"errors"
+	"github.com/firerainos/firerain-web-go/core"
+	"github.com/jinzhu/gorm"
 )
 
 type Group struct {
 	gorm.Model
-	Name string `gorm:"type:varchar(100);unique"`
+	Name        string `gorm:"type:varchar(100);unique"`
 	Description string
 }
 
-func AddGroup(name,description string) error {
+func AddGroup(name, description string) error {
 	db, err := core.GetSqlConn()
 	if err != nil {
 		return err
 	}
 	defer db.Close()
 
-	return db.Create(&Group{Name: name,Description:description}).Error
+	return db.Create(&Group{Name: name, Description: description}).Error
 }
 
 func GetGroup() ([]Group, error) {

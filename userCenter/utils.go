@@ -6,8 +6,8 @@ import (
 	"encoding/hex"
 )
 
-func EncryptionPassword(username,password,email string) string {
-	usernameData:= md5.Sum([]byte(username))
+func EncryptionPassword(username, password, email string) string {
+	usernameData := md5.Sum([]byte(username))
 	passwordData := md5.Sum([]byte(password))
 
 	emailData := md5.Sum([]byte(email))
@@ -23,4 +23,3 @@ func EncryptionPassword(username,password,email string) string {
 
 	return string(hex.EncodeToString(data))
 }
-

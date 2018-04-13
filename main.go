@@ -2,15 +2,15 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"github.com/firerainos/firerain-web-go/api"
 	"github.com/firerainos/firerain-web-go/core"
-	"os"
-	"fmt"
+	"github.com/firerainos/firerain-web-go/userCenter"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/firerainos/firerain-web-go/userCenter"
-	"strconv"
 	"log"
+	"os"
+	"strconv"
 	"strings"
 )
 
@@ -80,7 +80,7 @@ func main() {
 func checkPermissionMiddleware(ctx *gin.Context) {
 	if strings.Contains(ctx.Request.RequestURI, "/api/list") &&
 		ctx.Request.Method != "POST" {
-			checkPermission(ctx, "admin")
+		checkPermission(ctx, "admin")
 	} else if strings.Contains(ctx.Request.RequestURI, "/api/package") ||
 		strings.Contains(ctx.Request.RequestURI, "/api/item") {
 		if ctx.Request.Method == "GET" {
