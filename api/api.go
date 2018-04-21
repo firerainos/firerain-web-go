@@ -43,7 +43,7 @@ func Login(ctx *gin.Context) {
 
 		u.Password = ""
 		ctx.JSON(200, gin.H{
-			"code": "0",
+			"code": 0,
 			"user": u,
 		})
 	} else {
