@@ -49,6 +49,12 @@ func main() {
 	apiRouter.DELETE("/list/:id", api.DelList)
 	apiRouter.PATCH("/list/:id", api.PassList)
 
+	apiRouter.GET("/search",api.Search)
+	apiRouter.GET("/search/arch",api.GetArch)
+	apiRouter.GET("/search/repo",api.GetRepo)
+	apiRouter.GET("/search/maintainer",api.GetMaintainer)
+	apiRouter.GET("/search/flagged",api.GetFlagged)
+
 	packageRouter := apiRouter.Group("/package")
 
 	packageRouter.GET("", api.GetPackages)
