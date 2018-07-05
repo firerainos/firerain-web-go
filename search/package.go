@@ -16,10 +16,10 @@ type Package struct {
 	FlagDate string
 }
 
-func GetPackages(arch,repo,query,maintainer,flagged string) ([]Package,string,string) {
+func GetPackages(page,arch,repo,query,maintainer,flagged string) ([]Package,string,string) {
 	packages := make([]Package,0)
 
-	url := fmt.Sprintf("https://www.archlinux.org/packages/?q=%s&maintainer=%s&flagged=%s",query,maintainer,flagged)
+	url := fmt.Sprintf("https://www.archlinux.org/packages/?page=%s&q=%s&maintainer=%s&flagged=%s",page,query,maintainer,flagged)
 	if arch != "" {
 		url += "&arch="
 		url += arch

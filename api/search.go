@@ -11,8 +11,9 @@ func Search(ctx *gin.Context) {
 	query := ctx.Query("query")
 	maintainer := ctx.Query("maintainer")
 	flagged := ctx.Query("flagged")
+	page := ctx.Query("page")
 
-	pkgs,num,pages := search.GetPackages(arch,repo,query,maintainer,flagged)
+	pkgs,num,pages := search.GetPackages(page,arch,repo,query,maintainer,flagged)
 
 	ctx.JSON(200,gin.H{
 		"code":0,
