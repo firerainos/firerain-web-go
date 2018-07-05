@@ -1,4 +1,4 @@
-package packages
+package search
 
 func GetArch() []Option {
 	return GetSelectText("#id_arch")

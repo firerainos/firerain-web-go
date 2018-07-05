@@ -1,4 +1,4 @@
-package packages
+package search
 
 import (
 	"github.com/PuerkitoBio/goquery"

@@ -1,4 +1,4 @@
-package packages
+package search
 
 import (
 	"testing"
