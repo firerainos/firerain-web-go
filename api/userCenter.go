@@ -39,21 +39,18 @@ func AddUser(ctx *gin.Context) {
 }
 
 func DeleteUser(ctx *gin.Context) {
-	type Data struct {
-		Id int `json:"id" form:"id" binding:"required"`
-	}
-
-	data := Data{}
-
-	if err := ctx.Bind(&data); err != nil {
-		ctx.JSON(400, gin.H{
+    param := ctx.Param("id")
+	
+    id, err := strconv.Atoi(param)
+	if err != nil {
+		ctx.JSON(200, gin.H{
 			"code":    104,
-			"message": err.Error(),
+			"message": "id must int",
 		})
 		return
 	}
-
-	user, err := userCenter.GetUserById(data.Id)
+	
+	user, err := userCenter.GetUserById(id)
 	if err != nil {
 		ctx.JSON(200, gin.H{
 			"code":    104,
