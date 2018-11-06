@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"github.com/firerainos/firerain-web-go/api"
 	"github.com/firerainos/firerain-web-go/core"
+	"github.com/firerainos/firerain-web-go/database"
 	"github.com/firerainos/firerain-web-go/userCenter"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -49,11 +49,11 @@ func main() {
 	apiRouter.DELETE("/list/:id", api.DelList)
 	apiRouter.PATCH("/list/:id", api.PassList)
 
-	apiRouter.GET("/search",api.Search)
-	apiRouter.GET("/search/arch",api.GetArch)
-	apiRouter.GET("/search/repo",api.GetRepo)
-	apiRouter.GET("/search/maintainer",api.GetMaintainer)
-	apiRouter.GET("/search/flagged",api.GetFlagged)
+	apiRouter.GET("/search", api.Search)
+	apiRouter.GET("/search/arch", api.GetArch)
+	apiRouter.GET("/search/repo", api.GetRepo)
+	apiRouter.GET("/search/maintainer", api.GetMaintainer)
+	apiRouter.GET("/search/flagged", api.GetFlagged)
 
 	packageRouter := apiRouter.Group("/package")
 
@@ -151,10 +151,7 @@ func checkPermission(ctx *gin.Context, group string) {
 }
 
 func initDB() {
-	db, err := core.GetSqlConn()
-	if err != nil {
-		log.Panic(err)
-	}
+	db := database.Instance()
 
 	var createUser, createGroup bool
 
@@ -172,6 +169,4 @@ func initDB() {
 	if createGroup {
 		userCenter.AddUser("admin", "admin", "admin", "", []string{"users", "admin"})
 	}
-
-	db.Close()
 }

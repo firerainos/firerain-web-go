@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"github.com/firerainos/firerain-web-go/core"
+	"github.com/firerainos/firerain-web-go/database"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"net/http"
@@ -19,10 +20,7 @@ type List struct {
 }
 
 func GetList(context *gin.Context) {
-	db, err := core.GetSqlConn()
-	if err != nil {
-		panic(err)
-	}
+	db := database.Instance()
 	var lists []List
 	db.Find(&lists)
 
@@ -42,14 +40,7 @@ func AddList(context *gin.Context) {
 		})
 		return
 	}
-	db, err := core.GetSqlConn()
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"code":    103,
-			"message": err.Error(),
-		})
-		return
-	}
+	db := database.Instance()
 	db.Create(&list)
 	fmt.Println(list)
 
@@ -60,19 +51,10 @@ func AddList(context *gin.Context) {
 
 func DelList(context *gin.Context) {
 	id := context.Param("id")
-	db, err := core.GetSqlConn()
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"code":    103,
-			"message": err.Error(),
-		})
-		db.Close()
-		return
-	}
+	db := database.Instance()
 	var list List
 	db.First(&list, id)
 	db.Delete(&list)
-	db.Close()
 	context.JSON(http.StatusOK, gin.H{
 		"code": 0,
 	})
@@ -80,27 +62,18 @@ func DelList(context *gin.Context) {
 
 func PassList(context *gin.Context) {
 	id := context.Param("id")
-	db, err := core.GetSqlConn()
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"code":    103,
-			"message": err.Error(),
-		})
-		return
-	}
+	db := database.Instance()
 	var list List
 	db.First(&list, id)
-	err = core.SendMail(list.Email)
+	err := core.SendMail(list.Email)
 	if err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code":    103,
 			"message": err.Error(),
 		})
-		db.Close()
 		return
 	}
 	db.Model(&list).Update("state", "pass")
-	db.Close()
 	context.JSON(http.StatusOK, gin.H{
 		"code": 0,
 	})

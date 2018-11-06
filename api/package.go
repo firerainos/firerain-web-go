@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/firerainos/firerain-web-go/core"
+	"github.com/firerainos/firerain-web-go/database"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 )
@@ -24,15 +24,7 @@ func AddPackage(ctx *gin.Context) {
 		return
 	}
 
-	db, err := core.GetSqlConn()
-	if err != nil {
-		ctx.JSON(200, gin.H{
-			"code":    106,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer db.Close()
+	db := database.Instance()
 
 	if err := db.Create(&pkg).Error; err != nil {
 		ctx.JSON(200, gin.H{
@@ -57,15 +49,7 @@ func EditPackage(ctx *gin.Context) {
 		return
 	}
 
-	db, err := core.GetSqlConn()
-	if err != nil {
-		ctx.JSON(200, gin.H{
-			"code":    106,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer db.Close()
+	db := database.Instance()
 
 	if err := db.Model(&pkg).Where("id=?", id).Update(&pkg).Error; err != nil {
 		ctx.JSON(200, gin.H{
@@ -82,15 +66,7 @@ func EditPackage(ctx *gin.Context) {
 func DeletePackage(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	db, err := core.GetSqlConn()
-	if err != nil {
-		ctx.JSON(200, gin.H{
-			"code":    106,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer db.Close()
+	db := database.Instance()
 
 	if err := db.Unscoped().Delete(&Package{}, id).Error; err != nil {
 		ctx.JSON(200, gin.H{
@@ -105,15 +81,7 @@ func DeletePackage(ctx *gin.Context) {
 }
 
 func GetPackages(ctx *gin.Context) {
-	db, err := core.GetSqlConn()
-	if err != nil {
-		ctx.JSON(200, gin.H{
-			"code":    106,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer db.Close()
+	db := database.Instance()
 
 	var packages []Package
 	db.Find(&packages)

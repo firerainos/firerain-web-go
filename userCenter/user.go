@@ -1,7 +1,7 @@
 package userCenter
 
 import (
-	"github.com/firerainos/firerain-web-go/core"
+	"github.com/firerainos/firerain-web-go/database"
 	"github.com/jinzhu/gorm"
 	"os"
 )
@@ -21,11 +21,7 @@ func AddUser(nickname, username, password, email string, group []string) error {
 		return err
 	}
 
-	db, err := core.GetSqlConn()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
+	db := database.Instance()
 
 	user := User{Nickname: nickname, Username: username, Password: password, Email: email, Group: g}
 
@@ -42,11 +38,7 @@ func AddUser(nickname, username, password, email string, group []string) error {
 func GetUser() ([]User, error) {
 	var users []User
 
-	db, err := core.GetSqlConn()
-	if err != nil {
-		return users, err
-	}
-	defer db.Close()
+	db := database.Instance()
 
 	db.Preload("Group").Find(&users)
 
@@ -56,11 +48,7 @@ func GetUser() ([]User, error) {
 func GetUserByName(name string) (User, error) {
 	var user User
 
-	db, err := core.GetSqlConn()
-	if err != nil {
-		return user, err
-	}
-	defer db.Close()
+	db := database.Instance()
 
 	if db.Where("username = ?", name).Preload("Group").First(&user).RecordNotFound() {
 		return user, db.Error
@@ -72,11 +60,7 @@ func GetUserByName(name string) (User, error) {
 func GetUserById(id int) (User, error) {
 	var user User
 
-	db, err := core.GetSqlConn()
-	if err != nil {
-		return user, err
-	}
-	defer db.Close()
+	db := database.Instance()
 
 	if db.Where("id = ?", id).Preload("Group").First(&user).RecordNotFound() {
 		return user, db.Error
@@ -86,11 +70,7 @@ func GetUserById(id int) (User, error) {
 }
 
 func (user User) Delete() error {
-	db, err := core.GetSqlConn()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
+	db := database.Instance()
 
 	db.Delete(user)
 	os.Remove("./assets/avatar/" + user.Username)
@@ -106,21 +86,13 @@ func (user User) AddGroup(group string) error {
 
 	user.Group = append(user.Group, g)
 
-	db, err := core.GetSqlConn()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
+	db := database.Instance()
 
 	return db.Save(user).Error
 }
 
 func (user User) Edit(nickName, password string) error {
-	db, err := core.GetSqlConn()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
+	db := database.Instance()
 
 	tmp := User{}
 
@@ -145,11 +117,7 @@ func (user User) DeleteGroup(group string) error {
 
 	user.Group = groups
 
-	db, err := core.GetSqlConn()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
+	db := database.Instance()
 
 	return db.Save(user).Error
 }

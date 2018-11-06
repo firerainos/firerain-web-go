@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/firerainos/firerain-web-go/core"
+	"github.com/firerainos/firerain-web-go/database"
 	"github.com/firerainos/firerain-web-go/userCenter"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -71,14 +71,7 @@ func Signup(ctx *gin.Context) {
 		return
 	}
 
-	db, err := core.GetSqlConn()
-	if err != nil {
-		ctx.JSON(400, gin.H{
-			"code":    105,
-			"message": err.Error(),
-		})
-		return
-	}
+	db := database.Instance()
 
 	if db.Where("email = ? AND state = pass", data.Email).RecordNotFound() {
 		ctx.JSON(200, gin.H{
