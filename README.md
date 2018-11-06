@@ -5,7 +5,7 @@
 [![GoDoc](https://godoc.org/gitlab.com/firerainos/firerain-web-go?status.svg)](https://godoc.org/gitlab.com/firerainos/firerain-web-go)
 [![Sourcegraph](https://sourcegraph.com/gitlab.com/firerainos/firerain-web-go/-/badge.svg)](https://sourcegraph.com/gitlab.com/firerainos/firerain-web-go)
 
-## Move to gitlab.com/firerainos/firerain-web-go
+## Move to https://gitlab.com/firerainos/firerain-web-go
 
 # Install
 - go get gitlab.com/firerainos/firerain-web-go
