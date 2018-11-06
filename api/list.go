@@ -2,8 +2,8 @@ package api
 
 import (
 	"fmt"
-	"github.com/firerainos/firerain-web-go/core"
-	"github.com/firerainos/firerain-web-go/database"
+	"gitlab.com/firerainos/firerain-web-go/core"
+	"gitlab.com/firerainos/firerain-web-go/database"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"net/http"

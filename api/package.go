@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/firerainos/firerain-web-go/database"
+	"gitlab.com/firerainos/firerain-web-go/database"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 )

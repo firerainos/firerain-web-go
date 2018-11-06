@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/firerainos/firerain-web-go/search"
+	"gitlab.com/firerainos/firerain-web-go/search"
 )
 
 func Search(ctx *gin.Context) {

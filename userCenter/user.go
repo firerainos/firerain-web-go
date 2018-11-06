@@ -1,7 +1,7 @@
 package userCenter
 
 import (
-	"github.com/firerainos/firerain-web-go/database"
+	"gitlab.com/firerainos/firerain-web-go/database"
 	"github.com/jinzhu/gorm"
 	"os"
 )

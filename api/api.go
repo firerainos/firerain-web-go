@@ -1,8 +1,8 @@
 package api
 
 import (
-	"github.com/firerainos/firerain-web-go/database"
-	"github.com/firerainos/firerain-web-go/userCenter"
+	"gitlab.com/firerainos/firerain-web-go/database"
+	"gitlab.com/firerainos/firerain-web-go/userCenter"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"io"
